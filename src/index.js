@@ -7,6 +7,9 @@
  Посмотрите как работает forEach и повторите это поведение для массива, который будет передан в параметре array
  */
 function forEach(array, fn) {
+    for (let i = 0; i < array.length; i++) {
+        fn(array[i], i, array);
+    }
 }
 
 /*
@@ -16,6 +19,13 @@ function forEach(array, fn) {
  Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
  */
 function map(array, fn) {
+    let newArr = [];
+
+    for (let i = 0; i < array.length; i++) {
+        newArr.push(fn(array[i], i, array));
+    }
+
+    return newArr;
 }
 
 /*
@@ -25,6 +35,20 @@ function map(array, fn) {
  Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
  */
 function reduce(array, fn, initial) {
+    let accum;
+    let start = 0;
+
+    if (initial) {
+        accum = initial;
+    } else {
+        accum = array[0];
+        start = 1;
+    }
+    for (let i = start; i < array.length; i++) {
+        accum = fn(accum, array[i], i, array);
+    }
+    
+    return accum;
 }
 
 /*
@@ -36,6 +60,13 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 function upperProps(obj) {
+    let result = [];
+
+    Object.keys(obj).forEach((elem) => {
+        result.push(elem.toUpperCase());
+    });
+
+    return result;
 }
 
 /*
