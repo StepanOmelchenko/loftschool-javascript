@@ -54,11 +54,6 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 function upperProps(obj) {
-    /* let result = [];
-
-    Object.keys(obj).forEach((elem) => {
-        result.push(elem.toUpperCase());
-    }); */
 
     return Object.keys(obj).map(elem => elem.toUpperCase());
 }
@@ -83,9 +78,9 @@ function slice(array, from = 0, to) {
     }
     if (from < 0) {
         from = array.length + from;
-    }
-    if (from < 0 ) {
-        from = 0;
+        if (from < 0) {
+            from = 0;
+        }
     }
     for (let i = from; i < to; i++) {
         newArr.push(array[i]);
