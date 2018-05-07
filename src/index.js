@@ -17,26 +17,19 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
-    try {
-        if (!(array instanceof Array)) {
-            throw new Error('empty array');
+    if (!(array instanceof Array) || (!array.length)) {
+        throw new Error('empty array');
+    }
+    if (typeof fn != 'function') {
+        throw new Error('fn is not a function');
+    }
+    for (let i = 0; i < array.length; i++) {
+        if (!fn(array[i])) {
+            return false;
         }
-        if (!array.length) {
-            throw new Error('empty array');
-        }
-        if (typeof fn != 'function') {
-            throw new Error('fn is not a function');
-        }
-        for (let i = 0; i < array.length; i++) {
-            if (!fn(array[i])) {
-                return false;
-            }
-        }
+    }
 
-        return true;
-    } catch (e) {
-        throw e;
-    }    
+    return true;
 }
 
 /*
@@ -56,26 +49,19 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
-    try {
-        if (!(array instanceof Array)) {
-            throw new Error('empty array');
-        }
-        if (!array.length) {
-            throw new Error('empty array');
-        }
-        if (typeof fn != 'function') {
-            throw new Error('fn is not a function');
-        }
-        for (let i = 0; i < array.length; i++) {
-            if (fn(array[i])) {
-                return true;
-            }
-        }
-
-        return false;
-    } catch (e) {
-        throw e;
+    if (!(array instanceof Array) || (!array.length)) {
+        throw new Error('empty array');
     }
+    if (typeof fn != 'function') {
+        throw new Error('fn is not a function');
+    }
+    for (let i = 0; i < array.length; i++) {
+        if (fn(array[i])) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -92,12 +78,8 @@ function isSomeTrue(array, fn) {
 function returnBadArguments(fn, ...arg) {
     let result = [];
 
-    try {
-        if (typeof fn != 'function') {
-            throw new Error('fn is not a function');
-        }
-    } catch (e) {
-        throw e;
+    if (typeof fn != 'function') {
+        throw new Error('fn is not a function');
     }
 
     for (let i = 0; i < arg.length; i++) {
@@ -130,12 +112,8 @@ function returnBadArguments(fn, ...arg) {
  */
 function calculator(number = 0) {
     function checkNumber(val) {
-        try {
-            if (!isFinite(val)) {
-                throw new Error('number is not a number');
-            }
-        } catch (e) {
-            throw e;
+        if (!isFinite(val)) {
+            throw new Error('number is not a number');
         }
     }
 
@@ -155,16 +133,12 @@ function calculator(number = 0) {
             return number;
         },
         div: function() {
-            try {
-                [...arguments].forEach(val => {
-                    if (val === 0) {
-                        throw new Error('division by 0');
-                    }
-                    number/= val
-                });
-            } catch (e) {
-                throw e;
-            }
+            [...arguments].forEach(val => {
+                if (val === 0) {
+                    throw new Error('division by 0');
+                }
+                number/= val
+            });
             checkNumber(number);           
 
             return number;
