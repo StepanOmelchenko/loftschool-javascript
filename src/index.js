@@ -93,13 +93,11 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
-    let textNodes = [...where.childNodes].filter(elem => elem.nodeName == '#text');
-
-    for (let i=0; i<textNodes.length; i++) {
-        where.removeChild(textNodes[i]);
-    }
-
-    [...where.childNodes].forEach(elem => elem.textContent = '');
+    [...where.childNodes].forEach(elem => {
+        if (elem.nodeType == '3') {
+            where.removeChild(elem);
+        }
+    });
 }
 
 /*
@@ -151,6 +149,17 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    collectDOMStat.result = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    if (root.childNodes) {
+        collectDOMStat(root);
+    } 
+
+    return 
 }
 
 /*
