@@ -50,6 +50,7 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
+    return [...where.children].filter(elem => elem.nextElementSibling && elem.nextElementSibling.tagName == 'P');
 }
 
 /*
@@ -72,7 +73,7 @@ function findAllPSiblings(where) {
 function findError(where) {
     var result = [];
 
-    for (var child of where.childNodes) {
+    for (var child of where.children) {
         result.push(child.innerText);
     }
 
@@ -92,6 +93,13 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    let textNodes = [...where.childNodes].filter(elem => elem.nodeName == '#text');
+
+    for (let i=0; i<textNodes.length; i++) {
+        where.removeChild(textNodes[i]);
+    }
+
+    [...where.childNodes].forEach(elem => elem.textContent = '');
 }
 
 /*
@@ -107,6 +115,19 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    let textNodes = [...where.childNodes].filter(elem => elem.nodeName == '#text');
+
+    for (let i=0; i<textNodes.length; i++) {
+        where.removeChild(textNodes[i]);
+    }
+
+    [...where.childNodes].forEach(elem => {        
+        if (elem.childNodes) {
+            deleteTextNodesRecursive(elem);
+        } else {
+            elem.textContent = '';
+        }
+    } );
 }
 
 /*
