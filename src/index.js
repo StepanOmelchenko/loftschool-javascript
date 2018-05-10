@@ -113,19 +113,14 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-    let textNodes = [...where.childNodes].filter(elem => elem.nodeName == '#text');
-
-    for (let i=0; i<textNodes.length; i++) {
-        where.removeChild(textNodes[i]);
-    }
-
-    [...where.childNodes].forEach(elem => {        
+    [...where.childNodes].forEach(elem => {
+        if (elem.nodeType == '3') {
+            where.removeChild(elem);
+        }
         if (elem.childNodes) {
             deleteTextNodesRecursive(elem);
-        } else {
-            elem.textContent = '';
         }
-    } );
+    });
 }
 
 /*
@@ -154,8 +149,10 @@ function collectDOMStat(root) {
         classes: {},
         texts: 0
     };
-      
-    check(root);
+    
+    if (root.childNodes) {
+        [...root.childNodes].forEach(node => check(node));
+    }
       
     function check(elem) {
         if (elem.nodeType == 3) {
