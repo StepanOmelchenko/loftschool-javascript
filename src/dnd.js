@@ -17,6 +17,10 @@
  */
 const homeworkContainer = document.querySelector('#homework-container');
 
+homeworkContainer.style.width = '100%';
+homeworkContainer.style.height = '100vh';
+homeworkContainer.style.position = 'relative';
+
 /*
  Функция должна создавать и возвращать новый div с классом draggable-div и случайными размерами/цветом/позицией
  Функция должна только создавать элемент и задвать ему случайные размер/позицию/цвет
@@ -32,6 +36,8 @@ function createDiv() {
     let position = getRandomCoords(size);
 
     box.classList.add('draggable-div');
+    box.style.position = 'absolute';
+    box.style.borderRadius = '5px';
     box.style.width = `${size.width}px`;
     box.style.height = `${size.height}px`;
     box.style.backgroundColor = getRandomColor();
@@ -62,13 +68,9 @@ function createDiv() {
     }
 
     function getRandomCoords(size) {
-        console.log(homeworkContainer);
-        
         let container = getComputedStyle(homeworkContainer);
-        let left = Math.floor(Math.random() * (parseInt(container.width) - size)) + 'px';
-        let top = Math.floor(Math.random() * (parseInt(container.height) - size)) + 'px';
-        
-        console.log(left, top);
+        let left = Math.floor(Math.random() * (parseInt(container.width) - size.width));
+        let top = Math.floor(Math.random() * (parseInt(container.height) - size.height));
 
         return {
             left: left,
@@ -86,23 +88,22 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
-    target.addEventListener('onmousedown', move);
-
-    function move(e) {
-        let target = e.target.getBoundingClientRect();
-        let shiftX = e.clientX - target.left;
-        let shiftY = e.clientY - target.top;
+    target.addEventListener('mousedown', e => {
+        let target = e.target;
+        let targetSize = e.target.getBoundingClientRect();
+        let shiftX = e.clientX - targetSize.left;
+        let shiftY = e.clientY - targetSize.top;
         
         document.onmousemove = (e) => {
-            this.style.left = `${ e.clientX - shiftX }px`;
-            this.style.top = `${ e.clientY - shiftY }px`;
+            target.style.left = `${ e.clientX - shiftX }px`;
+            target.style.top = `${ e.clientY - shiftY }px`;
         };
         
         document.onmouseup = () => {
             document.onmousemove = null;
             document.onmouseup = null;
-        }      
-    }
+        }     
+    });
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
