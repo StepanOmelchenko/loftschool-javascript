@@ -17,6 +17,7 @@
  */
 const homeworkContainer = document.querySelector('#homework-container');
 
+addListeners(homeworkContainer);
 homeworkContainer.style.width = '100%';
 homeworkContainer.style.height = '100vh';
 homeworkContainer.style.position = 'relative';
@@ -38,11 +39,11 @@ function createDiv() {
     box.classList.add('draggable-div');
     box.style.position = 'absolute';
     box.style.borderRadius = '5px';
-    box.style.width = `${size.width}px`;
-    box.style.height = `${size.height}px`;
+    box.style.width = size.width + 'px';
+    box.style.height = size.height + 'px';
     box.style.backgroundColor = getRandomColor();
-    box.style.left = `${position.left}px`;
-    box.style.top = `${position.top}px`;
+    box.style.left = position.left + 'px';
+    box.style.top = position.top + 'px';
 
     return box;
 
@@ -58,10 +59,11 @@ function createDiv() {
 
     function getRandomColor() {
         let color = '#';
-        let arr = '0123456789ABCDEF';
+        let colorLength = 6;
+        let colorLetters = '0123456789ABCDEF';
         
-        for (let i = 0; i < 6; i++) {
-            color+=arr[Math.floor(Math.random() * 16)];
+        for (let i = 0; i < colorLength; i++) {
+            color+=colorLetters[Math.floor(Math.random() * 16)];
         }
 
         return color;
@@ -90,19 +92,22 @@ function createDiv() {
 function addListeners(target) {
     target.addEventListener('mousedown', e => {
         let target = e.target;
-        let targetSize = e.target.getBoundingClientRect();
-        let shiftX = e.clientX - targetSize.left;
-        let shiftY = e.clientY - targetSize.top;
         
-        document.onmousemove = (e) => {
-            target.style.left = `${ e.clientX - shiftX }px`;
-            target.style.top = `${ e.clientY - shiftY }px`;
-        };
-        
-        document.onmouseup = () => {
-            document.onmousemove = null;
-            document.onmouseup = null;
-        }     
+        if (target.classList.contains('draggable-div')) {
+            let targetSize = e.target.getBoundingClientRect();
+            let shiftX = e.clientX - targetSize.left;
+            let shiftY = e.clientY - targetSize.top;
+            
+            document.onmousemove = (e) => {
+                target.style.left = e.clientX - shiftX + 'px';
+                target.style.top = e.clientY - shiftY + 'px';
+            };
+            
+            document.onmouseup = () => {
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }     
+        }
     });
 }
 
@@ -115,7 +120,7 @@ addDivButton.addEventListener('click', function() {
     // добавить на страницу
     homeworkContainer.appendChild(div);
     // назначить обработчики событий мыши для реализации D&D
-    addListeners(div);
+    // addListeners(div);
     // можно не назначать обработчики событий каждому div в отдельности, а использовать делегирование
     // или использовать HTML5 D&D - https://www.html5rocks.com/ru/tutorials/dnd/basics/
 });
