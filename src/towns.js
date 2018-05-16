@@ -37,7 +37,7 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         let newXhr = new XMLHttpRequest();
 
         newXhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
@@ -53,6 +53,9 @@ function loadTowns() {
 
             resolve(result);
         };
+        newXhr.onerror = () => {
+            reject('Не удалось загрузить города');
+        }
     });
 }
 
@@ -89,6 +92,17 @@ loadTowns()
         loadingBlock.style.display = 'none';
         filterBlock.style.display = 'block';
         townsArray = result;
+    },
+    (err) => {
+        let rentyBtn = document.createElement('button');
+
+        rentyBtn.value = 'Try again';
+        loadingBlock.innerText = err;
+
+        rentyBtn.addEventListener('click', () => {
+            /* try again */
+        });
+
     });
 
 filterInput.addEventListener('keyup', function() {
