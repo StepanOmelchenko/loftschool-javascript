@@ -37,6 +37,23 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    return new Promise((resolve) => {
+        let newXhr = new XMLHttpRequest();
+
+        newXhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
+        newXhr.send();
+        newXhr.onload = () => {
+            let result = JSON.parse(newXhr.responseText).sort((val1, val2) => {
+                if (val1.name > val2.name) {
+                    return 1;
+                } else if (val1.name < val2.name) {
+                    return -1;
+                }
+            });
+
+            resolve(result);
+        };
+    });
 }
 
 /*
@@ -51,6 +68,9 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    let regExp = new RegExp(chunk, 'i');
+
+    return regExp.test(full);
 }
 
 /* Блок с надписью "Загрузка" */
@@ -61,9 +81,32 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
+/* Полученный массив городов */
+var townsArray = [];
+
+loadTowns()
+    .then((result) => {
+        loadingBlock.style.display = 'none';
+        filterBlock.style.display = 'block';
+        townsArray = result;
+    });
 
 filterInput.addEventListener('keyup', function() {
     // это обработчик нажатия кливиш в текстовом поле
+    let chunk = filterInput.value;
+    
+    filterResult.innerHTML = null;
+    if (chunk) {
+        townsArray.forEach((town) => {
+            if (isMatching(town.name, chunk)) {
+                let matchTown = document.createElement('div');
+    
+                matchTown.innerText = town.name;
+                filterResult.appendChild(matchTown);
+            }
+        });
+    }    
+
 });
 
 export {
