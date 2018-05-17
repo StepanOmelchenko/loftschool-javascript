@@ -43,15 +43,19 @@ function loadTowns() {
         newXhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
         newXhr.send();
         newXhr.onload = () => {
-            let result = JSON.parse(newXhr.responseText).sort((val1, val2) => {
-                if (val1.name > val2.name) {
-                    return 1;
-                } else if (val1.name < val2.name) {
-                    return -1;
-                }
-            });
-
-            resolve(result);
+            if (newXhr.status != 200) {
+                reject('Не удалось загрузить города');
+            } else {
+                let result = JSON.parse(newXhr.responseText).sort((val1, val2) => {
+                    if (val1.name > val2.name) {
+                        return 1;
+                    } else if (val1.name < val2.name) {
+                        return -1;
+                    }
+                });
+    
+                resolve(result);
+            }
         };
         newXhr.onerror = () => {
             reject('Не удалось загрузить города');
@@ -84,26 +88,33 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
+/* Кнопка повтора */
+const repeatBtn = document.createElement('button');
 /* Полученный массив городов */
 var townsArray = [];
 
-loadTowns()
-    .then((result) => {
-        loadingBlock.style.display = 'none';
-        filterBlock.style.display = 'block';
-        townsArray = result;
-    },
-    (err) => {
-        let rentyBtn = document.createElement('button');
+repeatBtn.innerText = 'Try again';
+repeatBtn.style.display = 'none';
+repeatBtn.addEventListener('click', () => {
+    repeatBtn.style.display = 'none';
+    getDataFromServer();
+});
+homeworkContainer.appendChild(repeatBtn);
 
-        rentyBtn.value = 'Try again';
-        loadingBlock.innerText = err;
+getDataFromServer();
 
-        rentyBtn.addEventListener('click', () => {
-            /* try again */
+function getDataFromServer() {
+    loadTowns()
+        .then((result) => {
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
+            townsArray = result;
+        },
+        (err) => {
+            repeatBtn.style.display = 'block';
+            loadingBlock.innerText = err;
         });
-
-    });
+}
 
 filterInput.addEventListener('keyup', function() {
     // это обработчик нажатия кливиш в текстовом поле
