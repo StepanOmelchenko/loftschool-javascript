@@ -28,6 +28,8 @@
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
+import { loadAndSortTowns as loadTowns } from './index';
+
 const homeworkContainer = document.querySelector('#homework-container');
 
 /*
@@ -36,32 +38,6 @@ const homeworkContainer = document.querySelector('#homework-container');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    return new Promise((resolve, reject) => {
-        let newXhr = new XMLHttpRequest();
-
-        newXhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
-        newXhr.send();
-        newXhr.onload = () => {
-            if (newXhr.status != 200) {
-                reject('Не удалось загрузить города');
-            } else {
-                let result = JSON.parse(newXhr.responseText).sort((val1, val2) => {
-                    if (val1.name > val2.name) {
-                        return 1;
-                    } else if (val1.name < val2.name) {
-                        return -1;
-                    }
-                });
-    
-                resolve(result);
-            }
-        };
-        newXhr.onerror = () => {
-            reject('Не удалось загрузить города');
-        }
-    });
-}
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
