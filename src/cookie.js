@@ -62,8 +62,8 @@ addButton.addEventListener('click', () => {
 
     if (newCookieName && newCookieValue) {
         document.cookie = `${newCookieName}=${newCookieValue}`;
-        addNameInput.value = '';
-        addValueInput.value = '';
+        // addNameInput.value = '';
+        // addValueInput.value = '';
     }
     
     allCookie = cookieToObject();
