@@ -43,10 +43,75 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+createCookieTable(cookieToObject());
+
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    createCookieTable(cookieToObject(), getChunk());
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    let newCookieName = addNameInput.value;
+    let newCookieValue = addValueInput.value;
+
+    if (newCookieName && newCookieValue) {
+        document.cookie = `${newCookieName}=${newCookieValue}`;
+        addNameInput.value = '';
+        addValueInput.value = '';
+    }
+    
+    createCookieTable(cookieToObject(), getChunk());
 });
+
+function cookieToObject() {
+    return document.cookie.split('; ').reduce((prev, curn) => {
+        let [name, value] = curn.split('=');
+
+        prev[name] = value;
+
+        return prev;
+    }, {});
+}
+
+function createCookieTable(cookieObject, matchChunk = '') {
+    listTable.innerHTML = '';
+    for (let cookie in cookieObject) {
+        if (cookieObject[cookie]) {
+            let cookieTr = document.createElement('tr');
+            let cookieName = document.createElement('td');
+            let cookieValue = document.createElement('td');
+            let cookieDelBut = document.createElement('button');
+            let cookieNameText = document.createTextNode(cookie);
+            let cookieValueText = document.createTextNode( cookieObject[cookie]);
+
+            cookieName.appendChild(cookieNameText);
+            cookieValue.appendChild(cookieValueText);
+            cookieTr.appendChild(cookieName);
+            cookieTr.appendChild(cookieValue);
+            cookieDelBut.innerText = 'Delete';
+            cookieDelBut.addEventListener('click', () => {
+                deleteCookie(cookie);
+                createCookieTable(cookieToObject());
+            });
+            cookieTr.appendChild(cookieDelBut);
+            if (isMatching(cookie, matchChunk) || isMatching(cookieObject[cookie], matchChunk)) {
+                listTable.appendChild(cookieTr);
+            }            
+        }        
+    }
+}
+
+function deleteCookie(cookie) {
+    document.cookie = `${cookie}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+}
+
+function isMatching(full, chunk) {
+    let regExp = new RegExp(chunk, 'i');
+
+    return regExp.test(full);
+}
+
+function getChunk() {
+    return filterNameInput.value;
+}
