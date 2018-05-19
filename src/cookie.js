@@ -42,12 +42,17 @@ const addValueInput = homeworkContainer.querySelector('#add-value-input');
 const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
+// cookie
+var allCookie = cookieToObject();
+// matchingChunk
+var matchingChunk = getMatchingChunk();
 
-createCookieTable(cookieToObject());
+createCookieTable(allCookie);
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    createCookieTable(cookieToObject(), getChunk());
+    matchingChunk = getMatchingChunk();
+    createCookieTable(allCookie, matchingChunk);
 });
 
 addButton.addEventListener('click', () => {
@@ -61,7 +66,8 @@ addButton.addEventListener('click', () => {
         addValueInput.value = '';
     }
     
-    createCookieTable(cookieToObject(), getChunk());
+    allCookie = cookieToObject();
+    createCookieTable(allCookie, matchingChunk);
 });
 
 function cookieToObject() {
@@ -78,24 +84,24 @@ function createCookieTable(cookieObject, matchChunk = '') {
     listTable.innerHTML = '';
     for (let cookie in cookieObject) {
         if (cookieObject[cookie]) {
-            let cookieTr = document.createElement('tr');
-            let cookieName = document.createElement('td');
-            let cookieValue = document.createElement('td');
-            let cookieDelBut = document.createElement('button');
-            let cookieNameText = document.createTextNode(cookie);
-            let cookieValueText = document.createTextNode( cookieObject[cookie]);
-
-            cookieName.appendChild(cookieNameText);
-            cookieValue.appendChild(cookieValueText);
-            cookieTr.appendChild(cookieName);
-            cookieTr.appendChild(cookieValue);
-            cookieDelBut.innerText = 'Delete';
-            cookieDelBut.addEventListener('click', () => {
-                deleteCookie(cookie);
-                createCookieTable(cookieToObject());
-            });
-            cookieTr.appendChild(cookieDelBut);
             if (isMatching(cookie, matchChunk) || isMatching(cookieObject[cookie], matchChunk)) {
+                let cookieTr = document.createElement('tr');
+                let cookieName = document.createElement('td');
+                let cookieValue = document.createElement('td');
+                let cookieDelBut = document.createElement('button');
+                let cookieNameText = document.createTextNode(cookie);
+                let cookieValueText = document.createTextNode( cookieObject[cookie]);
+
+                cookieName.appendChild(cookieNameText);
+                cookieValue.appendChild(cookieValueText);
+                cookieTr.appendChild(cookieName);
+                cookieTr.appendChild(cookieValue);
+                cookieDelBut.innerText = 'Delete';
+                cookieDelBut.addEventListener('click', () => {
+                    deleteCookie(cookie);
+                    listTable.removeChild(cookieTr);
+                });
+                cookieTr.appendChild(cookieDelBut);
                 listTable.appendChild(cookieTr);
             }            
         }        
@@ -104,6 +110,7 @@ function createCookieTable(cookieObject, matchChunk = '') {
 
 function deleteCookie(cookie) {
     document.cookie = `${cookie}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    allCookie = cookieToObject();
 }
 
 function isMatching(full, chunk) {
@@ -112,6 +119,6 @@ function isMatching(full, chunk) {
     return regExp.test(full);
 }
 
-function getChunk() {
+function getMatchingChunk() {
     return filterNameInput.value;
 }
